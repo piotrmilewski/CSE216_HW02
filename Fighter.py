@@ -4,7 +4,8 @@ import random
 
 class Fighter(Person.Person):
 
-    def __init__(self, skills:dict, name:str="", age:int=0, wealth:int=0):
+    def __init__(self, skills:dict, name:str="", age:int=0, wealth:int=0) -> "Fighter":
+        "Initializes an instance of a Fighter with skills, name, age, and wealth attributes."
         super().__init__(name, age, wealth)
         self.type = "Fighter"
         if not(self.adult):
@@ -36,19 +37,23 @@ class Fighter(Person.Person):
 
     @property
     def skills(self) -> dict:
+        "Getter for the skills attribute."
         return self.__skills
 
     @skills.setter
     def skills(self, skill:str, newValue:int) -> None:
+        "Setter for the skills attribute."
         if skill in self.__skills:
             self.__skills[skill] = newValue
         else:
             print("{} is not a skill".format(skill))
 
     def get_skill(self, skill:str) -> int:
+        "Gets an individual skill from the skills attribute."
         return self.__skills[skill]
 
     def challenge(self, challengee:'Fighter', skill:str) -> None:
+        "Challenges another fighter and calls the fighter's method to continue algorithm."
         if id(self) == id(challengee): #check so challenger can't fight himself
             print("Excuse me, you can't fight yourself.\n")
             return None
@@ -69,6 +74,7 @@ class Fighter(Person.Person):
         return None
 
     def sendChallenge(self, challenger:'Fighter', skill:str) -> None:
+        "Accepts the sent challenge and determines a winner using the Fight class."
         fight = Fight.Fight(challenger, self, skill)
         winner = fight.winner()
         if winner == self:
@@ -86,6 +92,7 @@ class Fighter(Person.Person):
             challenger.wonChallenge(skill, 10, 0)
 
     def wonChallenge(self, skill:str, money:int, lvlup:int) -> None:
+        "Determines what attributes should be changed based off of winning."
         self.wealth = self.wealth + money
         if (self.__skills[skill] < 10):
             if (lvlup == 2):
@@ -99,6 +106,7 @@ class Fighter(Person.Person):
             print("Skill can't level up, already at max level.")
     
     def lostChallenge(self, skill:str, money:int, lvlup:bool) -> None:
+        "Determines what attributes should be changed based off of losing."
         if ((self.wealth - money) < 0):
             self.wealth = 0
         else:
@@ -108,7 +116,17 @@ class Fighter(Person.Person):
                 if (random.choice([1,2]) == 1): #50% chance to rank up skill
                     self.__skills[skill] = self.__skills[skill] + 1
 
-    def __str__(self):
+    def withdraw(self,fighter:'Fighter') -> None:
+        "Withdraws from a challenge from said 'fighter'."
+        fighter.removeChallenge(self)
+    
+    def removeChallenge(self, fighter:'Fighter') -> None:
+        "Method for the Fighter class that doesn't do anything but is required."
+        print("No challenge issues to this fighter\n")
+        pass
+
+    def __str__(self) -> str:
+        "Prints string representation of the class' attributes."
         result = ("Name: " + self.name + " | Age: " + str(self.age) + " | Wealth: " + str(self.wealth) + "\n")
         result += ("Skills: " + str(self.skills) + "\n")
         return result
